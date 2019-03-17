@@ -70,7 +70,7 @@ class OssSychronizer(object):
 
 
 def main(argv):
-    utils.parse_argv(argv)
+    utils.parse_argv(configs)
 
     ossSync = OssSychronizer(configs['AccessKey'],
                              configs['AccessSecret'],

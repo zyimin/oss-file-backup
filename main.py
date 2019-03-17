@@ -26,7 +26,7 @@ class OssSychronizer(object):
         self.auth = oss2.Auth(access_key, access_secret)
         self.bucket = oss2.Bucket(self.auth, endpoint, bucket_name)
         self.backup_dir = bakdir
-        self.interval = 30  # 30 second
+        self.interval = 30  # 30 seconds
         self.exec_dir = os.getcwd()
 
     def __sync_file(self, dirname):
@@ -52,8 +52,10 @@ class OssSychronizer(object):
                     logger.info('Download file successfully: ' + obj.key)
                 except oss2.exceptions.NoSuchKey:
                     logger.warn('No such object key: {0}'.format(obj.key))
+                except oss2.exceptions.InconsistentError:
+                    continue
                 except:
-                    logger.error('Unexpected error: ' + sys.exc_info()[0])
+                    logger.error('Unexpected error')
                     exit(1)
 
         os.chdir(self.exec_dir)

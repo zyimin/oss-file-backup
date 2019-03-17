@@ -29,7 +29,7 @@ class OssSychronizer(object):
         self.interval = 30  # 30 second
         self.exec_dir = os.getcwd()
 
-    def __sync_file(self, dirname, ct):
+    def __sync_file(self, dirname):
         utils.mkdir(dirname)
         try:
             os.chdir(dirname)
@@ -42,27 +42,23 @@ class OssSychronizer(object):
                 utils.mkdir(obj.key)
                 continue
             else:
-                if ct < obj.last_modified:
-                    #timestr = datetime.utcfromtimestamp(obj.last_modified).strftime('%Y-%M-%d %H:%M:%S')
-                    if os.path.exists(obj.key):
-                        logger.info('File already downloaded: ' + obj.key)
-                        continue
-                    # Start to download file
-                    try:
-                        self.bucket.get_object_to_file(obj.key, obj.key, progress_callback=utils.percentage)
-                        logger.info('Download file successfully: ' + obj.key)
-                    except oss2.exceptions.NoSuchKey:
-                        logger.warn('No such object key: {0}'.format(obj.key))
-                    except:
-                        logger.error('Unexpected error: ' + sys.exc_info()[0])
-                        exit(1)
+                #timestr = datetime.utcfromtimestamp(obj.last_modified).strftime('%Y-%M-%d %H:%M:%S')
+                if os.path.exists(obj.key):
+                    logger.info('File already downloaded: ' + obj.key)
+                    continue
+                # Start to download file
+                try:
+                    self.bucket.get_object_to_file(obj.key, obj.key, progress_callback=utils.percentage)
+                    logger.info('Download file successfully: ' + obj.key)
+                except oss2.exceptions.NoSuchKey:
+                    logger.warn('No such object key: {0}'.format(obj.key))
+                except:
+                    logger.error('Unexpected error: ' + sys.exc_info()[0])
+                    exit(1)
 
         os.chdir(self.exec_dir)
 
-    def sync_file_first(self):
-        self.__sync_file(self.backup_dir, 0)
-
-    def sync_file_loop(self):
+    def _sync_file_loop(self):
         current_time = int(time.time())
         while True:
             tmp = current_time
@@ -71,8 +67,7 @@ class OssSychronizer(object):
             time.sleep(self.interval)
 
     def sync(self):
-        self.sync_file_first()
-        self.sync_file_loop()
+        self._sync_file_loop()
 
 
 def main(argv):

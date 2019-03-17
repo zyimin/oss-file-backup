@@ -49,7 +49,8 @@ class OssSychronizer(object):
                         continue
                     # Start to download file
                     try:
-                        self.bucket.get_object_to_file(obj.key, obj.key)
+                        self.bucket.get_object_to_file(obj.key, obj.key, progress_callback=utils.percentage)
+                        logger.info('Download file successfully: ' + obj.key)
                     except oss2.exceptions.NoSuchKey:
                         logger.warn('No such object key: {0}'.format(obj.key))
                     except:

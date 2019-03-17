@@ -1,6 +1,7 @@
 import logging
 import os
 import argparse
+import sys
 
 logger = logging.getLogger(__name__)
 
@@ -32,4 +33,13 @@ def parse_argv(config):
         config['Endpoint'] = args.endpoint
     if args.backupDir:
         config['BackupDir'] = args.backupDir
-    
+
+
+def percentage(consumed_bytes, total_bytes):
+    if total_bytes:
+        rate = int(100 * (float(consumed_bytes) / float(total_bytes)))
+        if rate == 100:
+            print('\r{0}%'.format(rate))
+        else:
+            print('\r{0}%'.format(rate), end='')
+        sys.stdout.flush()

@@ -59,11 +59,8 @@ class OssSychronizer(object):
         os.chdir(self.exec_dir)
 
     def _sync_file_loop(self):
-        current_time = int(time.time())
         while True:
-            tmp = current_time
-            self.__sync_file(self.backup_dir, tmp)
-            current_time = int(time.time())
+            self.__sync_file(self.backup_dir)
             time.sleep(self.interval)
 
     def sync(self):
